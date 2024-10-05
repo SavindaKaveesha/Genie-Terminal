@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tauri Command Prompt</title>
+    <script type="module" src="/main.js" defer></script>
+  </head>
+
+  <body>
+    <div class="terminal">
+
+      <div id="commandOutputRoot" class="command-root">
+        <div style="padding: 5px 0 5px 0"></div>
+      </div>
+
+      <div class="input-container">
+        <span id="prompt-display" class="prompt">➜</span>
+        <input id="command-user-input" class="command-input" type="text" autofocus placeholder="Enter command here..." />
+      </div>
+      <div id="rootCommandsDropDown" class="input-container dropdown">
+        <div id="commandsDropDown" class="dropdown-content"></div>
+      </div>
+    </div>
+  </body>
+</html>
