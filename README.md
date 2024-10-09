@@ -1,3 +1,4 @@
+
 # Genie Terminal
 
 Genie Terminal is an enhanced command-line interface designed to improve the user experience by offering intelligent code suggestions, real-time assistance, and a lightweight, high-performing interface. This modern CLI aims to be accessible to both novice and experienced users, bridging the gap between traditional command-line tools and user-friendly design.
@@ -25,3 +26,30 @@ Genie Terminal is an enhanced command-line interface designed to improve the use
    ```bash
    git clone https://github.com/your-username/genie-terminal.git
    cd genie-terminal
+   ```
+
+2. Build the project using Tauri:
+   ```bash
+   tauri build
+   ```
+
+3. Run the application:
+   ```bash
+   ./genie-terminal
+   ```
+
+## Objectives
+
+- Simplify user interaction with intelligent code suggestions and real-time assistance.
+- Ensure high performance with lightweight design.
+- Provide a modern and accessible CLI experience for both beginners and advanced users.
+
+## Future Developments
+
+- Enhance AI chatbot for more complex queries.
+- Expand cross-platform functionality with additional features.
+- Continuous integration of new enhancements based on user feedback.
+
+## Contribution
+
+Feel free to open issues or submit pull requests to contribute to the development of Genie Terminal.
