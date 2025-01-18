@@ -107,10 +107,127 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  commandOutputRoot.addEventListener('DOMNodeInserted', function ( event ) {
-    body.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
-  }, false );
+// Create a MutationObserver to observe changes in the commandOutputRoot
+const observer = new MutationObserver((mutationsList) => {
+  for (const mutation of mutationsList) {
+    if (mutation.type === 'childList') {
+      body.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+    }
+  }
+});
+
+// Configure the observer to watch for child nodes being added
+observer.observe(commandOutputRoot, { childList: true, subtree: true });
+
 
   body.addEventListener("click", () => commandInputEl.focus());
 
 });
+
+
+
+const openChatbotBtn = document.getElementById("openChatbotBtn");
+const closeChatbotBtn = document.getElementById("closeChatbotBtn");
+const chatbotContainer = document.getElementById("chatbotContainer");
+const chatbotMessages = document.getElementById("chatbotMessages");
+const chatbotInput = document.getElementById("chatbotInput");
+const sendChatbotMessage = document.getElementById("sendChatbotMessage");
+
+// Open and close chatbot
+openChatbotBtn.addEventListener("click", () => {
+  chatbotContainer.style.right = "0";
+});
+closeChatbotBtn.addEventListener("click", () => {
+  chatbotContainer.style.right = "-300px";
+});
+
+// Send a message to the chatbot API
+sendChatbotMessage.addEventListener("click", async () => {
+  const userMessage = chatbotInput.value.trim();
+  if (!userMessage) return;
+
+  // Display user message
+  appendMessage(userMessage, "user");
+
+  chatbotInput.value = "";
+
+  // Call chatbot API
+  const botResponse = await invokeChatbotAPI(userMessage);
+
+  // Format the bot's response before appending it
+  const formattedResponse = formatBotResponse(botResponse);
+
+  // Append the formatted bot message
+  appendMessage(formattedResponse, "bot");
+});
+
+// Append messages to the chatbot
+function appendMessage(message, sender) {
+  const messageElement = document.createElement("p");
+  messageElement.classList.add(sender);
+  messageElement.innerHTML = message; // Use innerHTML to render HTML tags like <b> and <br>
+  chatbotMessages.appendChild(messageElement);
+  chatbotMessages.scrollTop = chatbotMessages.scrollHeight; // Auto-scroll
+}
+
+// Call the chatbot API
+async function invokeChatbotAPI(message) {
+  try {
+    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyC-0W1tfqreK-I30O5DJMb_DoduKbAFeis", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: message
+          }]
+        }]
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("API response not OK");
+    }
+
+    const data = await response.json();
+
+    if (data && Array.isArray(data.candidates) && data.candidates.length > 0) {
+      const firstCandidate = data.candidates[0];
+      // Accessing the 'text' property from the response
+      if (firstCandidate.content && firstCandidate.content.parts && firstCandidate.content.parts[0].text) {
+        return firstCandidate.content.parts[0].text;  // Return the 'text' from the first part
+      } else {
+        console.error("API response does not contain 'text' in parts", data);
+        return "Sorry, the response format is not as expected.";
+      }
+    } else {
+      console.error("Unexpected API response:", data);
+      return "Sorry, something went wrong with the response.";
+    }
+  } catch (error) {
+    console.error("Chatbot API error:", error);
+    return "Sorry, something went wrong.";
+  }
+}
+
+// Format the bot response to apply bold, code blocks, and line breaks
+function formatBotResponse(response) {
+  let responseArray = response.split("`"); // Split by backticks for code parts
+  let newResponse = "";
+
+  // Loop through the split response and apply code block formatting
+  for (let i = 0; i < responseArray.length; i++) {
+    if (i % 2 == 0) {
+      newResponse += responseArray[i]; // Regular text
+    } else {
+      newResponse += "<code>" + responseArray[i] + "</code>"; // Code formatting for parts inside backticks
+    }
+  }
+
+  // Replace remaining asterisks with <br> for line breaks
+  newResponse = newResponse.split("*").join("</br>");
+
+  return newResponse; // Return the formatted response
+}
