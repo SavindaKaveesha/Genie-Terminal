@@ -120,7 +120,7 @@ const observer = new MutationObserver((mutationsList) => {
 observer.observe(commandOutputRoot, { childList: true, subtree: true });
 
 
-  body.addEventListener("click", () => commandInputEl.focus());
+  body.addEventListener("click", () => commandInputEl);
 
 });
 
@@ -136,9 +136,11 @@ const sendChatbotMessage = document.getElementById("sendChatbotMessage");
 // Open and close chatbot
 openChatbotBtn.addEventListener("click", () => {
   chatbotContainer.style.right = "0";
+  openChatbotBtn.style.display = "none";
 });
 closeChatbotBtn.addEventListener("click", () => {
   chatbotContainer.style.right = "-300px";
+  openChatbotBtn.style.display = "block";
 });
 
 // Send a message to the chatbot API
